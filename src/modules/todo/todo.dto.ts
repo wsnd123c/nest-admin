@@ -7,8 +7,9 @@ export class TodoDto {
   @ApiProperty({ description: '名称' })
   @IsString()
   value: string
+  userId:string
 }
 
 export class TodoUpdateDto extends PartialType(TodoDto) {}
 
-export class TodoQueryDto extends IntersectionType(PagerDto, TodoDto) {}
+export class TodoQueryDto extends IntersectionType(PagerDto,PartialType(TodoDto)) {}

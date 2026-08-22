@@ -12,6 +12,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 import { ApiResult } from '~/common/decorators/api-result.decorator'
 import { IdParam } from '~/common/decorators/id-param.decorator'
+import { AuthUser } from '~/modules/auth/decorators/auth-user.decorator'
 
 import { Pagination } from '~/helper/paginate/pagination'
 import { definePermission, Perm } from '~/modules/auth/decorators/permission.decorator'
@@ -22,6 +23,7 @@ import { TodoEntity } from '~/modules/todo/todo.entity'
 
 import { TodoDto, TodoQueryDto, TodoUpdateDto } from './todo.dto'
 import { TodoService } from './todo.service'
+import { log } from 'console'
 
 export const permissions = definePermission('todo', {
   LIST: 'list',
@@ -41,8 +43,9 @@ export class TodoController {
   @ApiOperation({ summary: '获取Todo列表' })
   @ApiResult({ type: [TodoEntity] })
   @Perm(permissions.LIST)
-  async list(@Query() dto: TodoQueryDto): Promise<Pagination<TodoEntity>> {
-    return this.todoService.list(dto)
+  async list(@Query() dto: TodoQueryDto,@AuthUser() IAuthUser): Promise<Pagination<TodoEntity>> {
+    console.log(dto)
+    return this.todoService.list(dto,IAuthUser)
   }
 
   @Get(':id')
@@ -56,8 +59,10 @@ export class TodoController {
   @Post()
   @ApiOperation({ summary: '创建Todo' })
   @Perm(permissions.CREATE)
-  async create(@Body() dto: TodoDto): Promise<void> {
-    await this.todoService.create(dto)
+  async create(@Body() dto: TodoDto,@AuthUser() user: IAuthUser): Promise<void> {
+      console.log(dto)
+      console.log(user);
+      await this.todoService.create(dto, user);
   }
 
   @Put(':id')

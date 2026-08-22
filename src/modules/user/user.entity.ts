@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer'
+import { IsUUID  } from 'class-validator'
 import {
   Column,
   Entity,

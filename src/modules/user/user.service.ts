@@ -155,12 +155,13 @@ export class UserService {
       throw new BusinessException(ErrorEnum.SYSTEM_USER_EXISTS)
 
     await this.entityManager.transaction(async (manager) => {
+      /* 加盐加密，用户的密码相同的时候1·23456会生成 同样的md5，加上随机数，解决这个问题 */
       const salt = randomValue(32)
-
       if (!password) {
         const initPassword = await this.paramConfigService.findValueByKey(
           SYS_USER_INITPASSWORD,
         )
+        // 这是个md5加密
         password = md5(`${initPassword ?? '123456'}${salt}`)
       }
       else {

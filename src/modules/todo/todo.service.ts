@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Repository ,FindOptionsWhere} from 'typeorm'
+
 
 import { paginate } from '~/helper/paginate'
 import { Pagination } from '~/helper/paginate/pagination'
@@ -18,8 +19,13 @@ export class TodoService {
   async list({
     page,
     pageSize,
-  }: TodoQueryDto): Promise<Pagination<TodoEntity>> {
-    return paginate(this.todoRepository, { page, pageSize })
+  }: TodoQueryDto,userInfo:IAuthUser): Promise<Pagination<TodoEntity>> {
+    const where: FindOptionsWhere<TodoEntity> = {
+      user:{
+        id:userInfo.uid
+      }
+    };
+    return paginate(this.todoRepository, { page, pageSize },{where})
   }
 
   async detail(id: number): Promise<TodoEntity> {
@@ -30,8 +36,13 @@ export class TodoService {
     return item
   }
 
-  async create(dto: TodoDto) {
-    await this.todoRepository.save(dto)
+ async create(dto: TodoDto, user: IAuthUser): Promise<TodoEntity> {
+    const todo = this.todoRepository.create({
+      value: dto.value,
+      user: { id: user.uid } 
+    });
+    return this.todoRepository.save(todo);
+
   }
 
   async update(id: number, dto: TodoUpdateDto) {
