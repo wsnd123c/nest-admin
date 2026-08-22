@@ -1,17 +1,17 @@
 export type TreeNode<T = any> = T & {
-  id: number
-  parentId: number
+  id: string
+  parentId: string
   children?: TreeNode<T>[]
 }
 
 export type ListNode<T extends object = any> = T & {
-  id: number
-  parentId: number
+  id: string
+  parentId: string
 }
 
 export function list2Tree<T extends ListNode[]>(
   items: T,
-  parentId: number | null = null,
+  parentId: string | null = null,
 ): TreeNode<T[number]>[] {
   return items
     .filter(item => item.parentId === parentId)

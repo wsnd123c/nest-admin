@@ -48,7 +48,7 @@ import { SocketModule } from './socket/socket.module'
           const req = context.switchToHttp().getRequest<FastifyRequest<{ Params: { id?: string } }>>()
           if (req.params?.id && req.body) {
             // 供自定义参数验证器(UniqueConstraint)使用
-            cls.set('operateId', Number.parseInt(req.params.id))
+            cls.set('operateId', req.params.id)
           }
         },
       },

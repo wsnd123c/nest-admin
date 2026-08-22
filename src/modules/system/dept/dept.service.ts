@@ -26,7 +26,7 @@ export class DeptService {
     return this.deptRepository.find({ order: { orderNo: 'DESC' } })
   }
 
-  async info(id: number): Promise<DeptEntity> {
+  async info(id: string): Promise<DeptEntity> {
     const dept = await this.deptRepository
       .createQueryBuilder('dept')
       .leftJoinAndSelect('dept.parent', 'parent')
@@ -51,7 +51,7 @@ export class DeptService {
     })
   }
 
-  async update(id: number, { parentId, ...data }: DeptDto): Promise<void> {
+  async update(id: string, { parentId, ...data }: DeptDto): Promise<void> {
     const item = await this.deptRepository
       .createQueryBuilder('dept')
       .where({ id })
@@ -69,7 +69,7 @@ export class DeptService {
     })
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.deptRepository.delete(id)
   }
 
@@ -85,14 +85,14 @@ export class DeptService {
   /**
    * 根据部门查询关联的用户数量
    */
-  async countUserByDeptId(id: number): Promise<number> {
+  async countUserByDeptId(id: string): Promise<number> {
     return this.userRepository.countBy({ dept: { id } })
   }
 
   /**
    * 查找当前部门下的子部门数量
    */
-  async countChildDept(id: number): Promise<number> {
+  async countChildDept(id: string): Promise<number> {
     const item = await this.deptRepository.findOneBy({ id })
     return (await this.deptRepository.countDescendants(item)) - 1
   }
@@ -101,7 +101,7 @@ export class DeptService {
    * 获取部门列表树结构
    */
   async getDeptTree(
-    uid: number,
+    uid: string,
     { name }: DeptQueryDto,
   ): Promise<DeptEntity[]> {
     const tree: DeptEntity[] = []

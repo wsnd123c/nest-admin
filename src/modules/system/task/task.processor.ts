@@ -8,7 +8,7 @@ import { SYS_TASK_QUEUE_NAME } from './constant'
 import { TaskService } from './task.service'
 
 export interface ExecuteData {
-  id: number
+  id: string
   args?: string | null
   service: string
 }

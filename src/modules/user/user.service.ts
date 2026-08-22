@@ -8,7 +8,7 @@ import { InjectRedis } from '~/common/decorators/inject-redis.decorator'
 
 import { BusinessException } from '~/common/exceptions/biz.exception'
 import { ErrorEnum } from '~/constants/error-code.constant'
-import { ROOT_ROLE_ID, SYS_USER_INITPASSWORD } from '~/constants/system.constant'
+import { ROOT_USERNAME, SYS_USER_INITPASSWORD } from '~/constants/system.constant'
 import { genAuthPermKey, genAuthPVKey, genAuthTokenKey, genOnlineUserKey } from '~/helper/genRedisKey'
 
 import { paginate } from '~/helper/paginate'
@@ -44,7 +44,7 @@ export class UserService {
     private readonly qqService: QQService,
   ) {}
 
-  async findUserById(id: number): Promise<UserEntity | undefined> {
+  async findUserById(id: string): Promise<UserEntity | undefined> {
     return this.userRepository
       .createQueryBuilder('user')
       .where({
@@ -68,7 +68,7 @@ export class UserService {
    * 获取用户信息
    * @param uid user id
    */
-  async getAccountInfo(uid: number): Promise<AccountInfo> {
+  async getAccountInfo(uid: string): Promise<AccountInfo> {
     const user: UserEntity = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.roles', 'role')
@@ -86,7 +86,7 @@ export class UserService {
   /**
    * 更新个人信息
    */
-  async updateAccountInfo(uid: number, info: AccountUpdateDto): Promise<void> {
+  async updateAccountInfo(uid: string, info: AccountUpdateDto): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: uid })
     if (isEmpty(user))
       throw new BusinessException(ErrorEnum.USER_NOT_FOUND)
@@ -112,7 +112,7 @@ export class UserService {
   /**
    * 更改密码
    */
-  async updatePassword(uid: number, dto: PasswordUpdateDto): Promise<void> {
+  async updatePassword(uid: string, dto: PasswordUpdateDto): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: uid })
     if (isEmpty(user))
       throw new BusinessException(ErrorEnum.USER_NOT_FOUND)
@@ -130,7 +130,7 @@ export class UserService {
   /**
    * 直接更改密码
    */
-  async forceUpdatePassword(uid: number, password: string): Promise<void> {
+  async forceUpdatePassword(uid: string, password: string): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: uid })
 
     const newPassword = md5(`${password}${user.psalt}`)
@@ -185,7 +185,7 @@ export class UserService {
    * 更新用户信息
    */
   async update(
-    id: number,
+    id: string,
     { password, deptId, roleIds, status, ...data }: UserUpdateDto,
   ): Promise<void> {
     await this.entityManager.transaction(async (manager) => {
@@ -229,7 +229,7 @@ export class UserService {
    * 查找用户信息
    * @param id 用户id
    */
-  async info(id: number): Promise<UserEntity> {
+  async info(id: string): Promise<UserEntity> {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.roles', 'roles')
@@ -246,7 +246,7 @@ export class UserService {
   /**
    * 根据ID列表删除用户
    */
-  async delete(userIds: number[]): Promise<void | never> {
+  async delete(userIds: string[]): Promise<void | never> {
     const rootUserId = await this.findRootUserId()
     if (userIds.includes(rootUserId))
       throw new BadRequestException('不能删除root用户!')
@@ -257,9 +257,9 @@ export class UserService {
   /**
    * 查找超管的用户ID
    */
-  async findRootUserId(): Promise<number> {
+  async findRootUserId(): Promise<string> {
     const user = await this.userRepository.findOneBy({
-      roles: { id: ROOT_ROLE_ID },
+      username: ROOT_USERNAME,
     })
     return user.id
   }
@@ -300,7 +300,7 @@ export class UserService {
   /**
    * 禁用用户
    */
-  async forbidden(uid: number, accessToken?: string): Promise<void> {
+  async forbidden(uid: string, accessToken?: string): Promise<void> {
     await this.redis.del(genAuthPVKey(uid))
     await this.redis.del(genAuthTokenKey(uid))
     await this.redis.del(genAuthPermKey(uid))
@@ -315,7 +315,7 @@ export class UserService {
   /**
    * 禁用多个用户
    */
-  async multiForbidden(uids: number[]): Promise<void> {
+  async multiForbidden(uids: string[]): Promise<void> {
     if (uids) {
       const pvs: string[] = []
       const ts: string[] = []
@@ -334,7 +334,7 @@ export class UserService {
   /**
    * 升级用户版本密码
    */
-  async upgradePasswordV(id: number): Promise<void> {
+  async upgradePasswordV(id: string): Promise<void> {
     // admin:passwordVersion:${param.id}
     const v = await this.redis.get(genAuthPVKey(id))
     if (!isEmpty(v))

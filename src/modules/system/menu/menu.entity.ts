@@ -7,7 +7,7 @@ import { RoleEntity } from '../role/role.entity'
 @Entity({ name: 'sys_menu' })
 export class MenuEntity extends CompleteEntity {
   @Column({ name: 'parent_id', nullable: true })
-  parentId: number
+  parentId: string
 
   @Column()
   name: string

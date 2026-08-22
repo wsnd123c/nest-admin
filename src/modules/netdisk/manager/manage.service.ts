@@ -179,7 +179,7 @@ export class NetDiskManageService {
             }
             else {
               this.userService
-                .getAccountInfo(Number.parseInt(respBody.endUser))
+                .getAccountInfo(respBody.endUser)
                 .then((user: AccountInfo) => {
                   if (isEmpty(user)) {
                     resolve(detailInfo)

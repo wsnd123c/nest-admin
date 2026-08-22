@@ -64,7 +64,7 @@ export class MenuService {
     this.sseService.noticeClientToUpdateMenusByMenuIds([result.id])
   }
 
-  async update(id: number, menu: MenuUpdateDto): Promise<void> {
+  async update(id: string, menu: MenuUpdateDto): Promise<void> {
     await this.menuRepository.update(id, menu)
     this.sseService.noticeClientToUpdateMenusByMenuIds([id])
   }
@@ -72,14 +72,15 @@ export class MenuService {
   /**
    * 根据角色获取所有菜单
    */
-  async getMenus(uid: number) {
+  async getMenus(uid: string) {
     const roleIds = await this.roleService.getRoleIdsByUser(uid)
+    const roleValues = await this.roleService.getRoleValues(roleIds)
     let menus: MenuEntity[] = []
 
     if (isEmpty(roleIds))
       return generatorRouters([])
 
-    if (this.roleService.hasAdminRole(roleIds)) {
+    if (this.roleService.hasAdminRole(roleValues)) {
       menus = await this.menuRepository.find({ order: { orderNo: 'ASC' } })
     }
     else {
@@ -120,7 +121,7 @@ export class MenuService {
   /**
    * 查找当前菜单下的子菜单，目录以及菜单
    */
-  async findChildMenus(mid: number): Promise<any> {
+  async findChildMenus(mid: string): Promise<any> {
     const allMenus: any = []
     const menus = await this.menuRepository.findBy({ parentId: mid })
     // if (_.isEmpty(menus)) {
@@ -142,7 +143,7 @@ export class MenuService {
    * 获取某个菜单的信息
    * @param mid menu id
    */
-  async getMenuItemInfo(mid: number): Promise<MenuEntity> {
+  async getMenuItemInfo(mid: string): Promise<MenuEntity> {
     const menu = await this.menuRepository.findOneBy({ id: mid })
     return menu
   }
@@ -150,7 +151,7 @@ export class MenuService {
   /**
    * 获取某个菜单以及关联的父菜单的信息
    */
-  async getMenuItemAndParentInfo(mid: number) {
+  async getMenuItemAndParentInfo(mid: string) {
     const menu = await this.menuRepository.findOneBy({ id: mid })
     let parentMenu: MenuEntity | undefined
     if (menu && menu.parentId)
@@ -170,11 +171,12 @@ export class MenuService {
   /**
    * 获取当前用户的所有权限
    */
-  async getPermissions(uid: number): Promise<string[]> {
+  async getPermissions(uid: string): Promise<string[]> {
     const roleIds = await this.roleService.getRoleIdsByUser(uid)
+    const roleValues = await this.roleService.getRoleValues(roleIds)
     let permission: any[] = []
     let result: any = null
-    if (this.roleService.hasAdminRole(roleIds)) {
+    if (this.roleService.hasAdminRole(roleValues)) {
       result = await this.menuRepository.findBy({
         permission: Not(IsNull()),
         type: In([1, 2]),
@@ -205,14 +207,14 @@ export class MenuService {
   /**
    * 删除多项菜单
    */
-  async deleteMenuItem(mids: number[]): Promise<void> {
+  async deleteMenuItem(mids: string[]): Promise<void> {
     await this.menuRepository.delete(mids)
   }
 
   /**
    * 刷新指定用户ID的权限
    */
-  async refreshPerms(uid: number): Promise<void> {
+  async refreshPerms(uid: string): Promise<void> {
     const perms = await this.getPermissions(uid)
     const online = await this.redis.get(genAuthTokenKey(uid))
     if (online) {
@@ -230,7 +232,7 @@ export class MenuService {
     const onlineUserIds: string[] = await this.redis.keys(genAuthTokenKey('*'))
     if (onlineUserIds && onlineUserIds.length > 0) {
       const promiseArr = onlineUserIds
-        .map(i => Number.parseInt(i.split(RedisKeys.AUTH_TOKEN_PREFIX)[1]))
+        .map(i => i.split(RedisKeys.AUTH_TOKEN_PREFIX)[1])
         .filter(i => i)
         .map(async (uid) => {
           const perms = await this.getPermissions(uid)
@@ -247,7 +249,7 @@ export class MenuService {
   /**
    * 根据菜单ID查找是否有关联角色
    */
-  async checkRoleByMenuId(id: number): Promise<boolean> {
+  async checkRoleByMenuId(id: string): Promise<boolean> {
     return !!(await this.menuRepository.findOne({
       where: {
         roles: {

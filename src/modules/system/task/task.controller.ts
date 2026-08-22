@@ -49,7 +49,7 @@ export class TaskController {
   @Put(':id')
   @ApiOperation({ summary: '更新任务' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body() dto: TaskUpdateDto): Promise<void> {
+  async update(@IdParam() id: string, @Body() dto: TaskUpdateDto): Promise<void> {
     const serviceCall = dto.service.split('.')
     await this.taskService.checkHasMissionMeta(serviceCall[0], serviceCall[1])
     await this.taskService.update(id, dto)
@@ -59,14 +59,14 @@ export class TaskController {
   @ApiOperation({ summary: '查询任务详细信息' })
   @ApiResult({ type: TaskEntity })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number): Promise<TaskEntity> {
+  async info(@IdParam() id: string): Promise<TaskEntity> {
     return this.taskService.info(id)
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除任务' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     const task = await this.taskService.info(id)
     await this.taskService.delete(task)
   }
@@ -74,7 +74,7 @@ export class TaskController {
   @Put(':id/once')
   @ApiOperation({ summary: '手动执行一次任务' })
   @Perm(permissions.ONCE)
-  async once(@IdParam() id: number): Promise<void> {
+  async once(@IdParam() id: string): Promise<void> {
     const task = await this.taskService.info(id)
     await this.taskService.once(task)
   }
@@ -82,7 +82,7 @@ export class TaskController {
   @Put(':id/stop')
   @ApiOperation({ summary: '停止任务' })
   @Perm(permissions.STOP)
-  async stop(@IdParam() id: number): Promise<void> {
+  async stop(@IdParam() id: string): Promise<void> {
     const task = await this.taskService.info(id)
     await this.taskService.stop(task)
   }
@@ -90,7 +90,7 @@ export class TaskController {
   @Put(':id/start')
   @ApiOperation({ summary: '启动任务' })
   @Perm(permissions.START)
-  async start(@IdParam() id: number): Promise<void> {
+  async start(@IdParam() id: string): Promise<void> {
     const task = await this.taskService.info(id)
 
     await this.taskService.start(task)

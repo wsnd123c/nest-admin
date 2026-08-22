@@ -1,6 +1,6 @@
 declare global {
   interface IAuthUser {
-    uid: number
+    uid: string
     pv: number
     /** 过期时间 */
     exp?: number

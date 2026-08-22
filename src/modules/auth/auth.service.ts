@@ -101,7 +101,7 @@ export class AuthService {
       throw new BusinessException(ErrorEnum.INVALID_USERNAME_PASSWORD)
   }
 
-  async loginLog(uid: number, ip: string, ua: string) {
+  async loginLog(uid: string, ip: string, ua: string) {
     await this.loginLogService.create(uid, ip, ua)
   }
 
@@ -129,31 +129,31 @@ export class AuthService {
   /**
    * 获取菜单列表
    */
-  async getMenus(uid: number) {
+  async getMenus(uid: string) {
     return this.menuService.getMenus(uid)
   }
 
   /**
    * 获取权限列表
    */
-  async getPermissions(uid: number): Promise<string[]> {
+  async getPermissions(uid: string): Promise<string[]> {
     return this.menuService.getPermissions(uid)
   }
 
-  async getPermissionsCache(uid: number): Promise<string[]> {
+  async getPermissionsCache(uid: string): Promise<string[]> {
     const permissionString = await this.redis.get(genAuthPermKey(uid))
     return permissionString ? JSON.parse(permissionString) : []
   }
 
-  async setPermissionsCache(uid: number, permissions: string[]): Promise<void> {
+  async setPermissionsCache(uid: string, permissions: string[]): Promise<void> {
     await this.redis.set(genAuthPermKey(uid), JSON.stringify(permissions))
   }
 
-  async getPasswordVersionByUid(uid: number): Promise<string> {
+  async getPasswordVersionByUid(uid: string): Promise<string> {
     return this.redis.get(genAuthPVKey(uid))
   }
 
-  async getTokenByUid(uid: number): Promise<string> {
+  async getTokenByUid(uid: string): Promise<string> {
     return this.redis.get(genAuthTokenKey(uid))
   }
 }

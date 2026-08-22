@@ -4,6 +4,7 @@ import {
   IsIn,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
   MinLength,
 } from 'class-validator'
@@ -39,7 +40,8 @@ export class RoleDto extends OperatorDto {
   @ApiProperty({ description: '关联菜单、权限编号' })
   @IsOptional()
   @IsArray()
-  menuIds?: number[]
+  @IsUUID(4, { each: true })
+  menuIds?: string[]
 }
 
 export class RoleUpdateDto extends PartialType(RoleDto) {}

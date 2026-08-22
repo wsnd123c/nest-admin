@@ -50,7 +50,7 @@ export class ResourceGuard implements CanActivate {
        * 获取请求中的 items (ids) 验证数据拥有者
        * @param request
        */
-      const getRequestItems = (request?: FastifyRequest): number[] => {
+      const getRequestItems = (request?: FastifyRequest): string[] => {
         const { params = {}, body = {}, query = {} } = (request ?? {}) as any
         const id = params.id ?? body.id ?? query.id
 

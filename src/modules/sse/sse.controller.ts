@@ -1,4 +1,4 @@
-import { BeforeApplicationShutdown, Controller, Headers, Ip, Param, ParseIntPipe, Req, Res, Sse } from '@nestjs/common'
+import { BeforeApplicationShutdown, Controller, Headers, Ip, Param, ParseUUIDPipe, Req, Res, Sse } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { SkipThrottle } from '@nestjs/throttler'
 import { FastifyReply, FastifyRequest } from 'fastify'
@@ -15,7 +15,7 @@ import { MessageEvent, SseService } from './sse.service'
 @SkipThrottle()
 @Controller('sse')
 export class SseController implements BeforeApplicationShutdown {
-  private replyMap: Map<number, FastifyReply> = new Map()
+  private replyMap: Map<string, FastifyReply> = new Map()
 
   constructor(private readonly sseService: SseService, private onlineService: OnlineService) { }
 
@@ -38,7 +38,7 @@ export class SseController implements BeforeApplicationShutdown {
   @ApiOperation({ summary: '服务端推送消息' })
   @Sse(':uid')
   async sse(
-    @Param('uid', ParseIntPipe) uid: number,
+    @Param('uid', ParseUUIDPipe) uid: string,
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply,
     @Ip() ip: string,

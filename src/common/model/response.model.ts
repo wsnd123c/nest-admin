@@ -32,10 +32,10 @@ export class ResOp<T = any> {
 
 export class TreeResult<T> {
   @ApiProperty()
-  id: number
+  id: string
 
   @ApiProperty()
-  parentId: number
+  parentId: string
 
   @ApiProperty()
   children?: TreeResult<T>[]

@@ -17,7 +17,7 @@ export class BaseService<E extends ObjectLiteral, R extends Repository<E> = Repo
     return paginate(this.repository, { page, pageSize })
   }
 
-  async findOne(id: number): Promise<E> {
+  async findOne(id: string): Promise<E> {
     const item = await this.repository.createQueryBuilder().where({ id }).getOne()
     if (!item)
       throw new NotFoundException('未找到该记录')
@@ -29,11 +29,11 @@ export class BaseService<E extends ObjectLiteral, R extends Repository<E> = Repo
     return await this.repository.save(dto)
   }
 
-  async update(id: number, dto: any): Promise<void> {
+  async update(id: string, dto: any): Promise<void> {
     await this.repository.update(id, dto)
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const item = await this.findOne(id)
     await this.repository.remove(item)
   }

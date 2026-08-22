@@ -6,6 +6,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
   MinLength,
   ValidateNested,
@@ -18,10 +19,9 @@ export class DeptDto {
   name: string
 
   @ApiProperty({ description: '父级部门id' })
-  @Type(() => Number)
-  @IsInt()
+  @IsUUID(4)
   @IsOptional()
-  parentId: number
+  parentId: string
 
   @ApiProperty({ description: '排序编号', required: false })
   @IsInt()
@@ -31,28 +31,26 @@ export class DeptDto {
 }
 
 export class TransferDeptDto {
-  @ApiProperty({ description: '需要转移的管理员列表编号', type: [Number] })
+  @ApiProperty({ description: '需要转移的管理员列表编号', type: [String] })
   @IsArray()
   @ArrayNotEmpty()
-  userIds: number[]
+  @IsUUID(4, { each: true })
+  userIds: string[]
 
   @ApiProperty({ description: '需要转移过去的系统部门ID' })
-  @IsInt()
-  @Min(0)
-  deptId: number
+  @IsUUID(4)
+  deptId: string
 }
 
 export class MoveDept {
   @ApiProperty({ description: '当前部门ID' })
-  @IsInt()
-  @Min(0)
-  id: number
+  @IsUUID(4)
+  id: string
 
   @ApiProperty({ description: '移动到指定父级部门的ID' })
-  @IsInt()
-  @Min(0)
+  @IsUUID(4)
   @IsOptional()
-  parentId: number
+  parentId: string
 }
 
 export class MoveDeptDto {

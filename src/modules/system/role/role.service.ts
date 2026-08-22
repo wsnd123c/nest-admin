@@ -4,7 +4,7 @@ import { isEmpty, isNil } from 'lodash'
 import { EntityManager, In, Like, Repository } from 'typeorm'
 
 import { PagerDto } from '~/common/dto/pager.dto'
-import { ROOT_ROLE_ID } from '~/constants/system.constant'
+import { ROOT_ROLE_VALUE } from '~/constants/system.constant'
 import { paginate } from '~/helper/paginate'
 import { Pagination } from '~/helper/paginate/pagination'
 import { MenuEntity } from '~/modules/system/menu/menu.entity'
@@ -61,7 +61,7 @@ export class RoleService {
   /**
    * 根据角色获取角色信息
    */
-  async info(id: number) {
+  async info(id: string) {
     const info = await this.roleRepository
       .createQueryBuilder('role')
       .where({
@@ -77,8 +77,9 @@ export class RoleService {
     return { ...info, menuIds: menus.map(m => m.id) }
   }
 
-  async delete(id: number): Promise<void> {
-    if (id === ROOT_ROLE_ID)
+  async delete(id: string): Promise<void> {
+    const role = await this.roleRepository.findOneBy({ id })
+    if (role?.value === ROOT_ROLE_VALUE)
       throw new Error('不能删除超级管理员')
     await this.roleRepository.delete(id)
   }
@@ -86,7 +87,7 @@ export class RoleService {
   /**
    * 增加角色
    */
-  async create({ menuIds, ...data }: RoleDto): Promise<{ roleId: number }> {
+  async create({ menuIds, ...data }: RoleDto): Promise<{ roleId: string }> {
     const role = await this.roleRepository.save({
       ...data,
       menus: menuIds
@@ -115,7 +116,7 @@ export class RoleService {
   /**
    * 根据用户id查找角色信息
    */
-  async getRoleIdsByUser(id: number): Promise<number[]> {
+  async getRoleIdsByUser(id: string): Promise<string[]> {
     const roles = await this.roleRepository.find({
       where: {
         users: { id },
@@ -128,7 +129,7 @@ export class RoleService {
     return []
   }
 
-  async getRoleValues(ids: number[]): Promise<string[]> {
+  async getRoleValues(ids: string[]): Promise<string[]> {
     return (
       await this.roleRepository.findBy({
         id: In(ids),
@@ -136,7 +137,7 @@ export class RoleService {
     ).map(r => r.value)
   }
 
-  async isAdminRoleByUser(uid: number): Promise<boolean> {
+  async isAdminRoleByUser(uid: string): Promise<boolean> {
     const roles = await this.roleRepository.find({
       where: {
         users: { id: uid },
@@ -145,20 +146,20 @@ export class RoleService {
 
     if (!isEmpty(roles)) {
       return roles.some(
-        r => r.id === ROOT_ROLE_ID,
+        r => r.value === ROOT_ROLE_VALUE,
       )
     }
     return false
   }
 
-  hasAdminRole(rids: number[]): boolean {
-    return rids.includes(ROOT_ROLE_ID)
+  hasAdminRole(roleValues: string[]): boolean {
+    return roleValues.includes(ROOT_ROLE_VALUE)
   }
 
   /**
    * 根据角色ID查找是否有关联用户
    */
-  async checkUserByRoleId(id: number): Promise<boolean> {
+  async checkUserByRoleId(id: string): Promise<boolean> {
     return this.roleRepository.exist({
       where: {
         users: {

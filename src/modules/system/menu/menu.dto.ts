@@ -5,6 +5,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
   MinLength,
   ValidateIf,
@@ -36,7 +37,8 @@ export class MenuDto extends OperatorDto {
 
   @ApiProperty({ description: '父级菜单' })
   @IsOptional()
-  parentId: number
+  @IsUUID(4)
+  parentId: string
 
   @ApiProperty({ description: '菜单或权限名称' })
   @IsString()

@@ -19,7 +19,7 @@ export class CaptchaLogService {
     account: string,
     code: string,
     provider: 'sms' | 'email',
-    uid?: number,
+    uid?: string,
   ): Promise<void> {
     await this.captchaLogRepository.save({
       account,

@@ -46,21 +46,21 @@ export class DictItemController {
   @ApiOperation({ summary: '查询字典项信息' })
   @ApiResult({ type: DictItemEntity })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number): Promise<DictItemEntity> {
+  async info(@IdParam() id: string): Promise<DictItemEntity> {
     return this.dictItemService.findOne(id)
   }
 
   @Post(':id')
   @ApiOperation({ summary: '更新字典项' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body(UpdaterPipe) dto: DictItemDto): Promise<void> {
+  async update(@IdParam() id: string, @Body(UpdaterPipe) dto: DictItemDto): Promise<void> {
     await this.dictItemService.update(id, dto)
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除指定的字典项' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     await this.dictItemService.delete(id)
   }
 }

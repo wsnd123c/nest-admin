@@ -35,7 +35,7 @@ export class LoginLogService {
 
   ) {}
 
-  async create(uid: number, ip: string, ua: string): Promise<void> {
+  async create(uid: string, ip: string, ua: string): Promise<void> {
     try {
       const address = await getIpAddress(ip)
 

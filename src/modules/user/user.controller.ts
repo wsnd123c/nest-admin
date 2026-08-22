@@ -44,7 +44,7 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: '查询用户' })
   @Perm(permissions.READ)
-  async read(@IdParam() id: number) {
+  async read(@IdParam() id: string) {
     return this.userService.info(id)
   }
 
@@ -58,7 +58,7 @@ export class UserController {
   @Put(':id')
   @ApiOperation({ summary: '更新用户' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body() dto: UserUpdateDto): Promise<void> {
+  async update(@IdParam() id: string, @Body() dto: UserUpdateDto): Promise<void> {
     await this.userService.update(id, dto)
     await this.menuService.refreshPerms(id)
   }
@@ -67,7 +67,7 @@ export class UserController {
   @ApiOperation({ summary: '删除用户' })
   @ApiParam({ name: 'id', type: String, schema: { oneOf: [{ type: 'string' }, { type: 'number' }] } })
   @Perm(permissions.DELETE)
-  async delete(@Param('id', new ParseArrayPipe({ items: Number, separator: ',' })) ids: number[]): Promise<void> {
+  async delete(@Param('id', new ParseArrayPipe({ items: String, separator: ',' })) ids: string[]): Promise<void> {
     await this.userService.delete(ids)
     await this.userService.multiForbidden(ids)
   }
@@ -75,7 +75,7 @@ export class UserController {
   @Post(':id/password')
   @ApiOperation({ summary: '更改用户密码' })
   @Perm(permissions.PASSWORD_UPDATE)
-  async password(@IdParam() id: number, @Body() dto: UserPasswordDto): Promise<void> {
+  async password(@IdParam() id: string, @Body() dto: UserPasswordDto): Promise<void> {
     await this.userService.forceUpdatePassword(id, dto.password)
   }
 }

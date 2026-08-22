@@ -10,7 +10,7 @@ export class OnlineUserInfo extends OmitType(LoginLogInfo, ['id'] as const) {
   deptName: string
 
   @ApiProperty({ description: '用户ID' })
-  uid: number
+  uid: string
 
   @ApiProperty({ description: '是否为当前登录用户' })
   isCurrent?: boolean

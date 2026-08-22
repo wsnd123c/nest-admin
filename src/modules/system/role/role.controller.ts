@@ -57,7 +57,7 @@ export class RoleController {
   @ApiOperation({ summary: '获取角色信息' })
   @ApiResult({ type: RoleInfo })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number) {
+  async info(@IdParam() id: string) {
     return this.roleService.info(id)
   }
 
@@ -71,7 +71,7 @@ export class RoleController {
   @Put(':id')
   @ApiOperation({ summary: '更新角色' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body(UpdaterPipe)dto: RoleUpdateDto): Promise<void> {
+  async update(@IdParam() id: string, @Body(UpdaterPipe) dto: RoleUpdateDto): Promise<void> {
     await this.roleService.update(id, dto)
     await this.menuService.refreshOnlineUserPerms(false)
     this.sseService.noticeClientToUpdateMenusByRoleIds([id])
@@ -80,7 +80,7 @@ export class RoleController {
   @Delete(':id')
   @ApiOperation({ summary: '删除角色' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     if (await this.roleService.checkUserByRoleId(id))
       throw new BadRequestException('该角色存在关联用户，无法删除')
 

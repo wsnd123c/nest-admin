@@ -54,21 +54,21 @@ export class DictTypeController {
   @ApiOperation({ summary: '查询字典类型信息' })
   @ApiResult({ type: DictTypeEntity })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number): Promise<DictTypeEntity> {
+  async info(@IdParam() id: string): Promise<DictTypeEntity> {
     return this.dictTypeService.findOne(id)
   }
 
   @Post(':id')
   @ApiOperation({ summary: '更新字典类型' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body(UpdaterPipe) dto: DictTypeDto): Promise<void> {
+  async update(@IdParam() id: string, @Body(UpdaterPipe) dto: DictTypeDto): Promise<void> {
     await this.dictTypeService.update(id, dto)
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除指定的字典类型' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     await this.dictTypeService.delete(id)
   }
 }

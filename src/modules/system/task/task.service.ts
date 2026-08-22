@@ -113,7 +113,7 @@ export class TaskService implements OnModuleInit {
   /**
    * task info
    */
-  async info(id: number): Promise<TaskEntity> {
+  async info(id: string): Promise<TaskEntity> {
     const task = this.taskRepository
       .createQueryBuilder('task')
       .where({ id })
@@ -160,7 +160,7 @@ export class TaskService implements OnModuleInit {
       await this.start(task)
   }
 
-  async update(id: number, dto: TaskUpdateDto): Promise<void> {
+  async update(id: string, dto: TaskUpdateDto): Promise<void> {
     await this.taskRepository.update(id, dto)
     const task = await this.info(id)
     if (task.status === 0)
@@ -274,7 +274,7 @@ export class TaskService implements OnModuleInit {
   /**
    * 更新是否已经完成，完成则移除该任务并修改状态
    */
-  async updateTaskCompleteStatus(tid: number): Promise<void> {
+  async updateTaskCompleteStatus(tid: string): Promise<void> {
     const jobs = await this.taskQueue.getRepeatableJobs()
     const task = await this.taskRepository.findOneBy({ id: tid })
     // 如果下次执行时间小于当前时间，则表示已经执行完成。

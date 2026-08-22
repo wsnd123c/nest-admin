@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { Subscriber } from 'rxjs'
 import { In } from 'typeorm'
 
-import { ROOT_ROLE_ID } from '~/constants/system.constant'
-
 import { RoleEntity } from '~/modules/system/role/role.entity'
 import { UserEntity } from '~/modules/user/user.entity'
 
@@ -14,17 +12,17 @@ export interface MessageEvent {
   retry?: number
 }
 
-const clientMap: Map<number, Subscriber<MessageEvent>[]> = new Map()
+const clientMap: Map<string, Subscriber<MessageEvent>[]> = new Map()
 
 @Injectable()
 export class SseService {
-  addClient(uid: number, subscriber: Subscriber<MessageEvent>) {
+  addClient(uid: string, subscriber: Subscriber<MessageEvent>) {
     const clients = clientMap.get(uid) || []
     clientMap.set(uid, clients.concat(subscriber))
   }
 
   /** 移除与关闭指定端的用户(允许多端登录时的情况) */
-  removeClient(uid: number, subscriber: Subscriber<MessageEvent>): void {
+  removeClient(uid: string, subscriber: Subscriber<MessageEvent>): void {
     const clients = clientMap.get(uid)
     const targetIndex = clients?.findIndex(client => client === subscriber)
     if (targetIndex !== -1)
@@ -32,7 +30,7 @@ export class SseService {
   }
 
   /** 移除与关闭指定用户的连接 */
-  removeClients(uid: number): void {
+  removeClients(uid: string): void {
     const clients = clientMap.get(uid)
     clients?.forEach((client) => {
       client?.complete()
@@ -41,7 +39,7 @@ export class SseService {
   }
 
   /** 推送给指定用户 */
-  sendToClients(uid: number, data: MessageEvent): void {
+  sendToClients(uid: string, data: MessageEvent): void {
     const clients = clientMap.get(uid)
     clients?.forEach((client) => {
       client?.next?.(data)
@@ -60,8 +58,8 @@ export class SseService {
    * @param uid
    * @constructor
    */
-  async noticeClientToUpdateMenusByUserIds(uid: number | number[]) {
-    const userIds = [].concat(uid) as number[]
+  async noticeClientToUpdateMenusByUserIds(uid: string | string[]) {
+    const userIds = [].concat(uid) as string[]
     userIds.forEach((uid) => {
       this.sendToClients(uid, { type: 'updatePermsAndMenus' })
     })
@@ -70,7 +68,7 @@ export class SseService {
   /**
    * 通过menuIds通知用户更新权限菜单
    */
-  async noticeClientToUpdateMenusByMenuIds(menuIds: number[]): Promise<void> {
+  async noticeClientToUpdateMenusByMenuIds(menuIds: string[]): Promise<void> {
     const roleMenus = await RoleEntity.find({
       where: {
         menus: {
@@ -78,14 +76,14 @@ export class SseService {
         },
       },
     })
-    const roleIds = roleMenus.map(n => n.id).concat(ROOT_ROLE_ID)
+    const roleIds = roleMenus.map(n => n.id)
     await this.noticeClientToUpdateMenusByRoleIds(roleIds)
   }
 
   /**
    * 通过roleIds通知用户更新权限菜单
    */
-  async noticeClientToUpdateMenusByRoleIds(roleIds: number[]): Promise<void> {
+  async noticeClientToUpdateMenusByRoleIds(roleIds: string[]): Promise<void> {
     const users = await UserEntity.find({
       where: {
         roles: {

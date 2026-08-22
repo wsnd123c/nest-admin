@@ -108,7 +108,7 @@ export class JwtAuthGuard extends AuthGuard(AuthStrategy.JWT) {
     if (isSse) {
       const { uid } = request.params
 
-      if (Number(uid) !== request.user.uid)
+      if (uid !== request.user.uid)
         throw new UnauthorizedException('路径参数 uid 与当前 token 登录的用户 uid 不一致')
     }
 

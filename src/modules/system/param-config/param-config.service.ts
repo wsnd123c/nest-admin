@@ -52,21 +52,21 @@ export class ParamConfigService {
   /**
    * 更新
    */
-  async update(id: number, dto: Partial<ParamConfigDto>): Promise<void> {
+  async update(id: string, dto: Partial<ParamConfigDto>): Promise<void> {
     await this.paramConfigRepository.update(id, dto)
   }
 
   /**
    * 删除
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.paramConfigRepository.delete(id)
   }
 
   /**
    * 查询单个
    */
-  async findOne(id: number): Promise<ParamConfigEntity> {
+  async findOne(id: string): Promise<ParamConfigEntity> {
     return this.paramConfigRepository.findOneBy({ id })
   }
 

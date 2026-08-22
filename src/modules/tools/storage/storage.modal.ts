@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class StorageInfo {
   @ApiProperty({ description: '文件ID' })
-  id: number
+  id: string
 
   @ApiProperty({ description: '文件名' })
   name: string

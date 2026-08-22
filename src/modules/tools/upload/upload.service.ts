@@ -26,7 +26,7 @@ export class UploadService {
   /**
    * 保存文件上传记录
    */
-  async saveFile(file: MultipartFile, userId: number): Promise<string> {
+  async saveFile(file: MultipartFile, userId: string): Promise<string> {
     if (isNil(file))
       throw new NotFoundException('Have not any file to upload!')
 

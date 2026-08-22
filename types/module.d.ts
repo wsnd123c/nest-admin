@@ -10,6 +10,6 @@ declare module 'fastify' {
 declare module 'nestjs-cls' {
   interface ClsStore {
     /** 当前请求操作的 ID */
-    operateId: number
+    operateId: string
   }
 }

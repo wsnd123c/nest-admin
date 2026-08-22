@@ -58,7 +58,7 @@ export function BaseCrudFactory<
 
     @Get(':id')
     @ApiResult({ type: entity })
-    async get(@IdParam() id: number) {
+    async get(@IdParam() id: string) {
       return await this.service.findOne(id)
     }
 
@@ -69,17 +69,17 @@ export function BaseCrudFactory<
     }
 
     @Put(':id')
-    async update(@IdParam() id: number, @Body() dto: UpdateDto) {
+    async update(@IdParam() id: string, @Body() dto: UpdateDto) {
       return await this.service.update(id, dto)
     }
 
     @Patch(':id')
-    async patch(@IdParam() id: number, @Body() dto: UpdateDto) {
+    async patch(@IdParam() id: string, @Body() dto: UpdateDto) {
       await this.service.update(id, dto)
     }
 
     @Delete(':id')
-    async delete(@IdParam() id: number) {
+    async delete(@IdParam() id: string) {
       await this.service.delete(id)
     }
   }

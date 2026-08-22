@@ -33,7 +33,7 @@ export class DeptController {
   @ApiOperation({ summary: '获取部门列表' })
   @ApiResult({ type: [DeptEntity] })
   @Perm(permissions.LIST)
-  async list(@Query() dto: DeptQueryDto, @AuthUser('uid')uid: number): Promise<DeptEntity[]> {
+  async list(@Query() dto: DeptQueryDto, @AuthUser('uid') uid: string): Promise<DeptEntity[]> {
     return this.deptService.getDeptTree(uid, dto)
   }
 
@@ -47,21 +47,21 @@ export class DeptController {
   @Get(':id')
   @ApiOperation({ summary: '查询部门信息' })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number) {
+  async info(@IdParam() id: string) {
     return this.deptService.info(id)
   }
 
   @Put(':id')
   @ApiOperation({ summary: '更新部门' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body(UpdaterPipe) updateDeptDto: DeptDto): Promise<void> {
+  async update(@IdParam() id: string, @Body(UpdaterPipe) updateDeptDto: DeptDto): Promise<void> {
     await this.deptService.update(id, updateDeptDto)
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除部门' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     // 查询是否有关联用户或者部门，如果含有则无法删除
     const count = await this.deptService.countUserByDeptId(id)
     if (count > 0)

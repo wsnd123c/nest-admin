@@ -60,7 +60,7 @@ export class DictItemService {
   /**
    * 更新
    */
-  async update(id: number, dto: Partial<DictItemDto>): Promise<void> {
+  async update(id: string, dto: Partial<DictItemDto>): Promise<void> {
     const { typeId, ...rest } = dto
     await this.dictItemRepository.update(id, {
       ...rest,
@@ -73,14 +73,14 @@ export class DictItemService {
   /**
    * 删除
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.dictItemRepository.delete(id)
   }
 
   /**
    * 查询单个
    */
-  async findOne(id: number): Promise<DictItemEntity> {
+  async findOne(id: string): Promise<DictItemEntity> {
     return this.dictItemRepository.findOneBy({ id })
   }
 }

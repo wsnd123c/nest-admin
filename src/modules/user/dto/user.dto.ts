@@ -1,14 +1,13 @@
 import { ApiProperty, IntersectionType, PartialType } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
 import {
   ArrayMaxSize,
   ArrayMinSize,
   ArrayNotEmpty,
   IsEmail,
   IsIn,
-  IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Matches,
   MaxLength,
   MinLength,
@@ -38,17 +37,17 @@ export class UserDto {
   })
   password: string
 
-  @ApiProperty({ description: '归属角色', type: [Number] })
+  @ApiProperty({ description: '归属角色', type: [String] })
   @ArrayNotEmpty()
   @ArrayMinSize(1)
   @ArrayMaxSize(3)
-  roleIds: number[]
+  @IsUUID(4, { each: true, message: '角色ID必须是UUID格式' })
+  roleIds: string[]
 
-  @ApiProperty({ description: '归属大区', type: Number })
-  @Type(() => Number)
-  @IsInt()
+  @ApiProperty({ description: '归属大区', type: String })
+  @IsUUID(4, { message: '部门ID必须是UUID格式' })
   @IsOptional()
-  deptId?: number
+  deptId?: string
 
   @ApiProperty({ description: '呢称', example: 'admin' })
   @IsOptional()
@@ -56,8 +55,8 @@ export class UserDto {
   nickname: string
 
   @ApiProperty({ description: '邮箱', example: 'bqy.dev@qq.com' })
-  @IsEmail()
   @ValidateIf(o => !isEmpty(o.email))
+  @IsEmail()
   email: string
 
   @ApiProperty({ description: '手机号' })
@@ -80,19 +79,20 @@ export class UserDto {
 
   @ApiProperty({ description: '状态' })
   @IsIn([0, 1])
+  @IsOptional()
   status: number
 }
 
 export class UserUpdateDto extends PartialType(UserDto) {}
 
 export class UserQueryDto extends IntersectionType(PagerDto<UserDto>, PartialType(UserDto)) {
-  @ApiProperty({ description: '归属大区', example: 1, required: false })
-  @IsInt()
+  @ApiProperty({ description: '归属大区', type: String, required: false })
+  @IsUUID(4)
   @IsOptional()
-  deptId?: number
+  deptId?: string
 
   @ApiProperty({ description: '状态', example: 0, required: false })
-  @IsInt()
+  @IsIn([0, 1])
   @IsOptional()
   status?: number
 }

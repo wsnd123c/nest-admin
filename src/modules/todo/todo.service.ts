@@ -28,7 +28,7 @@ export class TodoService {
     return paginate(this.todoRepository, { page, pageSize },{where})
   }
 
-  async detail(id: number): Promise<TodoEntity> {
+  async detail(id: string): Promise<TodoEntity> {
     const item = await this.todoRepository.findOneBy({ id })
     if (!item)
       throw new NotFoundException('未找到该记录')
@@ -45,11 +45,11 @@ export class TodoService {
 
   }
 
-  async update(id: number, dto: TodoUpdateDto) {
+  async update(id: string, dto: TodoUpdateDto) {
     await this.todoRepository.update(id, dto)
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const item = await this.detail(id)
 
     await this.todoRepository.remove(item)

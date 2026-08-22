@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger'
-import { IsInt, IsOptional, IsString, MinLength } from 'class-validator'
+import { IsInt, IsOptional, IsString, IsUUID, MinLength } from 'class-validator'
 
 import { PagerDto } from '~/common/dto/pager.dto'
 
@@ -7,8 +7,8 @@ import { DictItemEntity } from './dict-item.entity'
 
 export class DictItemDto extends PartialType(DictItemEntity) {
   @ApiProperty({ description: '字典类型 ID' })
-  @IsInt()
-  typeId: number
+  @IsUUID(4)
+  typeId: string
 
   @ApiProperty({ description: '字典项键名' })
   @IsString()
@@ -33,8 +33,8 @@ export class DictItemDto extends PartialType(DictItemEntity) {
 
 export class DictItemQueryDto extends PagerDto {
   @ApiProperty({ description: '字典类型 ID', required: true })
-  @IsInt()
-  typeId: number
+  @IsUUID(4)
+  typeId: string
 
   @ApiProperty({ description: '字典项键名' })
   @IsString()

@@ -21,7 +21,7 @@ export class StorageService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(dto: StorageCreateDto, userId: number): Promise<void> {
+  async create(dto: StorageCreateDto, userId: string): Promise<void> {
     await this.storageRepository.save({
       ...dto,
       userId,
@@ -31,7 +31,7 @@ export class StorageService {
   /**
    * 删除文件
    */
-  async delete(fileIds: number[]): Promise<void> {
+  async delete(fileIds: string[]): Promise<void> {
     const items = await this.storageRepository.findByIds(fileIds)
     await this.storageRepository.delete(fileIds)
 

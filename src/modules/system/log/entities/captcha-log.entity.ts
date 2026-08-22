@@ -7,7 +7,7 @@ import { CommonEntity } from '~/common/entity/common.entity'
 export class CaptchaLogEntity extends CommonEntity {
   @Column({ name: 'user_id', nullable: true })
   @ApiProperty({ description: '用户ID' })
-  userId: number
+  userId: string
 
   @Column({ nullable: true })
   @ApiProperty({ description: '账号' })

@@ -44,21 +44,21 @@ export class ParamConfigController {
   @ApiOperation({ summary: '查询参数配置信息' })
   @ApiResult({ type: ParamConfigEntity })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number): Promise<ParamConfigEntity> {
+  async info(@IdParam() id: string): Promise<ParamConfigEntity> {
     return this.paramConfigService.findOne(id)
   }
 
   @Post(':id')
   @ApiOperation({ summary: '更新参数配置' })
   @Perm(permissions.UPDATE)
-  async update(@IdParam() id: number, @Body() dto: ParamConfigDto): Promise<void> {
+  async update(@IdParam() id: string, @Body() dto: ParamConfigDto): Promise<void> {
     await this.paramConfigService.update(id, dto)
   }
 
   @Delete(':id')
   @ApiOperation({ summary: '删除指定的参数配置' })
   @Perm(permissions.DELETE)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     await this.paramConfigService.delete(id)
   }
 }

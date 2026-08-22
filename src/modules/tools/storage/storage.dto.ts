@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ArrayNotEmpty, IsArray, IsOptional, IsString } from 'class-validator'
+import { ArrayNotEmpty, IsArray, IsOptional, IsString, IsUUID } from 'class-validator'
 
 import { PagerDto } from '~/common/dto/pager.dto'
 
@@ -61,8 +61,9 @@ export class StorageCreateDto {
 }
 
 export class StorageDeleteDto {
-  @ApiProperty({ description: '需要删除的文件ID列表', type: [Number] })
+  @ApiProperty({ description: '需要删除的文件ID列表', type: [String] })
   @IsArray()
   @ArrayNotEmpty()
-  ids: number[]
+  @IsUUID(4, { each: true })
+  ids: string[]
 }

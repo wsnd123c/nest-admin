@@ -55,21 +55,21 @@ export class DictTypeService {
   /**
    * 更新
    */
-  async update(id: number, dto: Partial<DictTypeDto>): Promise<void> {
+  async update(id: string, dto: Partial<DictTypeDto>): Promise<void> {
     await this.dictTypeRepository.update(id, dto)
   }
 
   /**
    * 删除
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.dictTypeRepository.delete(id)
   }
 
   /**
    * 查询单个
    */
-  async findOne(id: number): Promise<DictTypeEntity> {
+  async findOne(id: string): Promise<DictTypeEntity> {
     return this.dictTypeRepository.findOneBy({ id })
   }
 }

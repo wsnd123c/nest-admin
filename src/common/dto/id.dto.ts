@@ -1,6 +1,6 @@
-import { IsNumber } from 'class-validator'
+import { IsUUID } from 'class-validator'
 
 export class IdDto {
-  @IsNumber()
-  id: number
+  @IsUUID(4)
+  id: string
 }

@@ -52,7 +52,7 @@ export class TodoController {
   @ApiOperation({ summary: '获取Todo详情' })
   @ApiResult({ type: TodoEntity })
   @Perm(permissions.READ)
-  async info(@IdParam() id: number): Promise<TodoEntity> {
+  async info(@IdParam() id: string): Promise<TodoEntity> {
     return this.todoService.detail(id)
   }
 
@@ -69,7 +69,7 @@ export class TodoController {
   @ApiOperation({ summary: '更新Todo' })
   @Perm(permissions.UPDATE)
   @Resource(TodoEntity)
-  async update(@IdParam() id: number, @Body()dto: TodoUpdateDto): Promise<void> {
+  async update(@IdParam() id: string, @Body() dto: TodoUpdateDto): Promise<void> {
     await this.todoService.update(id, dto)
   }
 
@@ -77,7 +77,7 @@ export class TodoController {
   @ApiOperation({ summary: '删除Todo' })
   @Perm(permissions.DELETE)
   @Resource(TodoEntity)
-  async delete(@IdParam() id: number): Promise<void> {
+  async delete(@IdParam() id: string): Promise<void> {
     await this.todoService.delete(id)
   }
 }

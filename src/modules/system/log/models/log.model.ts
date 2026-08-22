@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class LoginLogInfo {
   @ApiProperty({ description: '日志编号' })
-  id: number
+  id: string
 
   @ApiProperty({ description: '登录ip', example: '1.1.1.1' })
   ip: string
@@ -25,10 +25,10 @@ export class LoginLogInfo {
 
 export class TaskLogInfo {
   @ApiProperty({ description: '日志编号' })
-  id: number
+  id: string
 
   @ApiProperty({ description: '任务编号' })
-  taskId: number
+  taskId: string
 
   @ApiProperty({ description: '任务名称' })
   name: string
