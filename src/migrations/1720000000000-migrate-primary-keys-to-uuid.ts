@@ -43,13 +43,19 @@ export class MigratePrimaryKeysToUuid1720000000000 implements MigrationInterface
       'todo',
       'tool_storage',
     ]
+    // MySQL requires both sides of a string foreign key to use identical
+    // character sets and collations.  Declare this explicitly instead of
+    // inheriting the (inconsistent) defaults from the legacy tables.
+    const uuidColumnType = 'char(36) CHARACTER SET ascii COLLATE ascii_general_ci'
+
     for (const table of primaryTables) {
-      await queryRunner.query(`ALTER TABLE \`${table}\` ADD \`uuid_id\` char(36) NULL`)
+      await queryRunner.query(`ALTER TABLE \`${table}\` ADD \`uuid_id\` ${uuidColumnType} NULL`)
       await queryRunner.query(`UPDATE \`${table}\` SET \`uuid_id\` = UUID()`)
     }
 
     const uuidColumns = [
       ['sys_captcha_log', 'user_id', 'sys_user'],
+      ['sys_dict_item', 'type_id', 'sys_dict_type'],
       ['sys_login_log', 'user_id', 'sys_user'],
       ['sys_user_roles', 'user_id', 'sys_user'],
       ['sys_user_roles', 'role_id', 'sys_role'],
@@ -63,8 +69,15 @@ export class MigratePrimaryKeysToUuid1720000000000 implements MigrationInterface
       ['sys_menu', 'parent_id', 'sys_menu'],
       ['sys_dept', 'parentId', 'sys_dept'],
     ]
+    const compositePrimaryKeyColumns = new Set([
+      'sys_user_roles.user_id',
+      'sys_user_roles.role_id',
+      'sys_role_menus.role_id',
+      'sys_role_menus.menu_id',
+    ])
     for (const [table, column, referencedTable] of uuidColumns) {
-      await queryRunner.query(`ALTER TABLE \`${table}\` MODIFY \`${column}\` char(36) NULL`)
+      const nullability = compositePrimaryKeyColumns.has(`${table}.${column}`) ? 'NOT NULL' : 'NULL'
+      await queryRunner.query(`ALTER TABLE \`${table}\` MODIFY \`${column}\` ${uuidColumnType} ${nullability}`)
       await queryRunner.query(`
         UPDATE \`${table}\` AS source
         INNER JOIN \`${referencedTable}\` AS target ON source.\`${column}\` = target.id
@@ -87,7 +100,7 @@ export class MigratePrimaryKeysToUuid1720000000000 implements MigrationInterface
       ['sys_role', 'update_by'],
     ]
     for (const [table, column] of auditColumns) {
-      await queryRunner.query(`ALTER TABLE \`${table}\` MODIFY \`${column}\` char(36) NULL`)
+      await queryRunner.query(`ALTER TABLE \`${table}\` MODIFY \`${column}\` ${uuidColumnType} NULL`)
       await queryRunner.query(`
         UPDATE \`${table}\` AS source
         INNER JOIN \`sys_user\` AS user ON source.\`${column}\` = user.id
@@ -100,7 +113,7 @@ export class MigratePrimaryKeysToUuid1720000000000 implements MigrationInterface
         ALTER TABLE \`${table}\`
         DROP PRIMARY KEY,
         CHANGE \`id\` \`legacy_id\` int NOT NULL,
-        CHANGE \`uuid_id\` \`id\` char(36) NOT NULL,
+        CHANGE \`uuid_id\` \`id\` ${uuidColumnType} NOT NULL,
         ADD PRIMARY KEY (\`id\`)
       `)
     }
